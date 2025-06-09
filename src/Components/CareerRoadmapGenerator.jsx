@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const MODEL_NAME = 'gemini-2.5-flash-preview-04-17';
-const API_KEY = 'AIzaSyCoYNO_88mK05IWYVFbkeK69sFpDXmK6fc'; // Demo only
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY; // Demo only
 
 const CareerRoadmapGenerator = () => {
   const [currentRole, setCurrentRole] = useState('');

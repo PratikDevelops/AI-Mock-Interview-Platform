@@ -18,7 +18,7 @@ const ChatBot = ({ onClose }) => {
   const chatEndRef = useRef(null);
 
   const MODEL_NAME = 'gemini-2.5-flash-preview-04-17';
-  const API_KEY = 'AIzaSyCoYNO_88mK05IWYVFbkeK69sFpDXmK6fc';
+  const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
   const genAI = new GoogleGenerativeAI(API_KEY);
   const model = genAI.getGenerativeModel({ model: MODEL_NAME });
 

@@ -1,22 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   FaSpinner,
   FaChevronDown,
   FaChevronUp,
-  FaLightbulb
-} from 'react-icons/fa';
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import { motion } from 'framer-motion';
+  FaLightbulb,
+} from "react-icons/fa";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { motion } from "framer-motion";
+import Markdown from "react-markdown"; // Just this import
 
-const MODEL_NAME = 'gemini-2.5-flash-preview-04-17';
-const API_KEY = 'AIzaSyCoYNO_88mK05IWYVFbkeK69sFpDXmK6fc';
+const MODEL_NAME = "gemini-2.5-flash-preview-04-17";
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 const InterviewQAGenerator = () => {
-  const [topic, setTopic] = useState('');
+  const [topic, setTopic] = useState("");
   const [numQuestions, setNumQuestions] = useState(5);
   const [qaPairs, setQaPairs] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [openIndex, setOpenIndex] = useState(null);
 
   const toggleIndex = (index) => {
@@ -24,16 +25,16 @@ const InterviewQAGenerator = () => {
   };
 
   const handleGenerate = async () => {
-    setError('');
+    setError("");
     setQaPairs([]);
 
     if (!topic.trim()) {
-      setError('Please enter a topic or job title.');
+      setError("Please enter a topic or job title.");
       return;
     }
 
     if (isNaN(numQuestions) || numQuestions < 1 || numQuestions > 50) {
-      setError('Please enter a valid number of questions (1-50).');
+      setError("Please enter a valid number of questions (1-50).");
       return;
     }
 
@@ -54,15 +55,15 @@ const InterviewQAGenerator = () => {
       const result = await model.generateContent(prompt);
       const text = (await result.response.text()).trim();
 
-      const jsonStart = text.indexOf('[');
-      const jsonEnd = text.lastIndexOf(']');
+      const jsonStart = text.indexOf("[");
+      const jsonEnd = text.lastIndexOf("]");
       const jsonString = text.slice(jsonStart, jsonEnd + 1);
       const parsed = JSON.parse(jsonString);
 
       setQaPairs(parsed);
     } catch (err) {
       console.error(err);
-      setError('Failed to generate interview questions.');
+      setError("Failed to generate interview questions.");
     } finally {
       setLoading(false);
     }
@@ -102,7 +103,9 @@ const InterviewQAGenerator = () => {
           onClick={handleGenerate}
           disabled={loading}
           className={` flex justify-center items-center gap-2 px-6 py-3 rounded font-semibold transition ${
-            loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white'
+            loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700 text-white"
           }`}
         >
           {loading ? (
@@ -110,7 +113,7 @@ const InterviewQAGenerator = () => {
               <FaSpinner className="animate-spin" /> Generating...
             </>
           ) : (
-            'Generate Questions'
+            "Generate Questions"
           )}
         </button>
       </section>
@@ -134,7 +137,9 @@ const InterviewQAGenerator = () => {
               {openIndex === index ? <FaChevronUp /> : <FaChevronDown />}
             </button>
             {openIndex === index && (
-              <p className="mt-3 text-base leading-relaxed">{item.answer}</p>
+              <div className="mt-3 prose prose-blue max-w-none text-base leading-relaxed">
+                <Markdown>{item.answer}</Markdown>
+              </div>
             )}
           </motion.div>
         ))}

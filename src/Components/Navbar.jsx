@@ -16,11 +16,11 @@ const Navbar = () => {
   const onLogout = () => {
     handleLogout();
     setUserMenuOpen(false);
-    navigate('/signup'); // or "/login" if you have a login route
+    navigate('/signup'); 
   };
 
   const onLoginClick = () => {
-    navigate('/signup'); // or your login/signup route
+    navigate('/signup'); 
   };
 
   return (

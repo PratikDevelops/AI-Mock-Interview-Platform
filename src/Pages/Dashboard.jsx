@@ -1,29 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
-  FaBars,
-  FaTimes,
   FaTachometerAlt,
   FaUserGraduate,
   FaChartLine,
-  FaFileAlt,
+  FaTimes,
+  FaBars,
+  FaComments,
   FaBuilding,
   FaUserTie,
-  FaLightbulb,
-  FaComments,
-  FaPaperPlane,
-  FaUserCircle,
+  FaRegEdit,
+  FaBookOpen,
+  FaQuestionCircle,
 } from "react-icons/fa";
+import { FaUser } from 'react-icons/fa'; 
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import ChatBot from "../Components/Chatbot";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import { auth } from "../firebase";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [user, setUser] = useState(null);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const menuItems = [
     {
@@ -33,56 +45,66 @@ const Dashboard = () => {
     },
     {
       path: "resume-analyzer",
-      label: "AI Resume Analyzer",
+      label: "Create Resume Analysis",
       icon: <FaUserGraduate className="inline mr-2" />,
     },
     {
       path: "career-roadmap",
-      label: "Career Roadmap Generator",
+      label: "Generate Career Roadmap",
       icon: <FaChartLine className="inline mr-2" />,
     },
     {
       path: "cover-letter",
-      label: "Cover Letter Generator",
-      icon: <FaFileAlt className="inline mr-2" />,
+      label: "Create Cover Letter",
+      icon: <FaRegEdit className="inline mr-2" />,
     },
     {
       path: "company-overview",
-      label: "Company Overview with AI",
+      label: "Create Company Overview",
       icon: <FaBuilding className="inline mr-2" />,
     },
     {
       path: "interview-qa",
-      label: "Generate Interview Questions",
-      icon: <FaLightbulb className="inline mr-2" />,
+      label: "Generate Interview Q&A",
+      icon: <FaQuestionCircle className="inline mr-2" />,
     },
     {
       path: "expert-booking",
-      label: "Expert Booking",
+      label: "Book an Expert",
       icon: <FaUserTie className="inline mr-2" />,
     },
     {
       path: "study-material",
-      label: "Study Material",
-      icon: <FaPaperPlane className="inline mr-2" />,
+      label: "Access Study Material",
+      icon: <FaBookOpen className="inline mr-2" />,
+    },
+    {
+      path: "job-search",
+      label: "Search Job",
+      icon: <FaBookOpen className="inline mr-2" />,
     },
   ];
 
-  const handleLogout = () => {
-    toast.success("Logged out successfully!");
-    setUserMenuOpen(false);
-    setTimeout(() => {
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      toast.success("Logged out successfully!");
+      setUserMenuOpen(false);
       navigate("/signup");
-    }, 1500);
+    } catch (error) {
+      toast.error("Failed to log out. Try again.");
+      console.error("Logout error:", error);
+    }
   };
 
   return (
-    <div className="flex h-screen  shadow">
+    <div className="flex h-screen shadow">
+      {/* Sidebar */}
       <aside
         className={`fixed z-30 inset-y-0 left-0 w-72 bg-white shadow-lg overflow-y-auto transition-transform duration-300 ease-in-out
-        ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0 md:static md:inset-auto`}
+          ${
+            sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } md:translate-x-0 md:static md:inset-auto`}
       >
         <div className="flex items-center justify-between px-8 py-6 border-b border-gray-200">
           <h1
@@ -91,6 +113,7 @@ const Dashboard = () => {
           >
             ConnectIQ
           </h1>
+
           <button
             className="md:hidden text-gray-600 hover:text-indigo-600 transition"
             onClick={() => setSidebarOpen(false)}
@@ -129,7 +152,9 @@ const Dashboard = () => {
         />
       )}
 
+      {/* Main content */}
       <div className="flex-1 flex flex-col">
+        {/* Mobile header */}
         <header className="flex items-center justify-between bg-white shadow px-6 py-4 md:hidden relative">
           <button
             onClick={() => setSidebarOpen(true)}
@@ -143,10 +168,21 @@ const Dashboard = () => {
           <div className="relative">
             <button
               onClick={() => setUserMenuOpen(!userMenuOpen)}
-              className="text-indigo-700 text-2xl focus:outline-none"
+              className="focus:outline-none rounded-full overflow-hidden border-2 border-indigo-700 w-8 h-8 flex items-center justify-center"
               aria-label="User menu"
             >
-              <FaUserCircle />
+              {user?.photoURL ? (
+                <img
+                  src={user.photoURL}
+                  alt="User Avatar"
+                  className="w-full h-full object-cover rounded-full"
+                />
+              ) : (
+                // fallback: simple colored circle with first letter
+                <div className="bg-indigo-600 text-white w-full h-full flex items-center justify-center rounded-full text-sm font-semibold">
+                  {user?.displayName?.charAt(0).toUpperCase() || "U"}
+                </div>
+              )}
             </button>
 
             {userMenuOpen && (
@@ -162,23 +198,38 @@ const Dashboard = () => {
           </div>
         </header>
 
-        <header className="hidden md:flex items-center  justify-end  px-6 py-6 relative">
+        {/* Desktop header */}
+        <header className="hidden md:flex items-center justify-end px-6 py-6 relative">
           <div className="relative flex items-center space-x-2">
             <button
               onClick={() => setUserMenuOpen(!userMenuOpen)}
-              className="text-indigo-700 text-3xl focus:outline-none"
+              className="focus:outline-none rounded-full overflow-hidden border-2 border-indigo-700 w-10 h-10 flex items-center justify-center"
               aria-label="User menu"
             >
-              <FaUserCircle />
+              {user?.photoURL ? (
+                <img
+                  src={user.photoURL}
+                  alt="User Avatar"
+                  className="w-full h-full object-cover rounded-full"
+                />
+              ) : user?.displayName ? (
+                <div className="bg-indigo-600 text-white w-full h-full flex items-center justify-center rounded-full text-base font-semibold">
+                  {user.displayName.charAt(0).toUpperCase()}
+                </div>
+              ) : (
+                <div className="bg-indigo-600 text-white w-full h-full flex items-center justify-center rounded-full text-xl">
+                  <FaUser />
+                </div>
+              )}
             </button>
 
             <span className="hidden md:inline text-indigo-700 font-semibold select-none">
-              Welcome, User
+              Welcome, {user?.displayName || user?.email || "User"}
             </span>
           </div>
 
           {userMenuOpen && (
-            <div className="absolute right-4 mt-25 w-40 bg-white border rounded  z-50">
+            <div className="absolute right-4 mt-25 w-40 bg-white border rounded z-50">
               <button
                 onClick={handleLogout}
                 className="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
@@ -213,7 +264,6 @@ const Dashboard = () => {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="colored"
       />
     </div>
   );

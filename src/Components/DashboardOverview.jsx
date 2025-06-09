@@ -4,8 +4,6 @@ import {
   FaCommentDots,
   FaPlay,
   FaSearch,
-  FaUserCircle,
-  FaPlusCircle,
   FaListAlt,
   FaChartBar,
   FaQuoteRight,
@@ -15,6 +13,16 @@ import {
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+
+import {
+  collection,
+  onSnapshot,
+  query,
+  orderBy,
+  where,
+} from "firebase/firestore";
+import { db, auth } from "../firebase";
+import { onAuthStateChanged } from "firebase/auth";
 
 const tipsList = [
   "Practice mock interviews daily!",
@@ -36,46 +44,66 @@ const DashboardOverview = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setTipIndex((prev) => (prev + 1) % tipsList.length);
+      // No need for tipIndex in dependency array since we use functional update
     }, 7000);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+    };
   }, []);
 
   useEffect(() => {
-    setTimeout(() => {
-      setInterviews([
-        {
-          id: 1,
-          company: "TechCorp",
-          position: "Frontend Developer",
-          date: "2025-05-20",
-          status: "Completed",
-          score: 78,
-          feedback: "Good problem-solving skills. Improve React hooks.",
-          tips: "Practice useEffect/useMemo/useCallback.",
-        },
-        {
-          id: 2,
-          company: "InnovateX",
-          position: "Backend Developer",
-          date: "2025-04-15",
-          status: "Completed",
-          score: 92,
-          feedback: "Strong database/API knowledge.",
-          tips: "Review PostgreSQL joins, MongoDB aggregations.",
-        },
-        {
-          id: 3,
-          company: "StartFlow",
-          position: "UI/UX Intern",
-          date: "2025-06-25",
-          status: "Pending",
-          score: null,
-          feedback: "",
-          tips: "Revisit Figma wireframe structure, accessibility design.",
-        },
-      ]);
-      setLoading(false);
-    }, 1000);
+    setLoading(true);
+
+    // Listen to Firebase auth state changes
+    const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log("User logged in:", user.uid);
+
+        // Build Firestore query
+        const q = query(
+          collection(db, "interview_submissions"),
+          where("userId", "==", user.uid),
+          orderBy("date", "desc")
+        );
+
+        // Listen to Firestore data
+        const unsubscribeSnapshot = onSnapshot(
+          q,
+          (snapshot) => {
+            const interviewsData = snapshot.docs.map((doc) => {
+              const data = doc.data();
+              return {
+                id: doc.id,
+                company: data.company || "",
+                position: data.position || "",
+                date: data.date || "",
+                status: data.status || "Pending",
+                score: data.score ?? null,
+                feedback: data.feedback || "",
+                tips: data.tips || "",
+              };
+            });
+            setInterviews(interviewsData);
+            setLoading(false);
+            console.log("Interviews state updated:", interviewsData);
+          },
+          (error) => {
+            console.error("Error fetching interviews:", error);
+            setLoading(false);
+          }
+        );
+
+        // Cleanup Firestore listener when auth state changes or component unmounts
+        return () => unsubscribeSnapshot();
+      } else {
+        console.error("User not logged in. Cannot fetch interviews.");
+        setInterviews([]);
+        setLoading(false);
+      }
+    });
+
+    // Cleanup auth listener on unmount
+    return () => unsubscribeAuth();
   }, []);
 
   const filteredInterviews = interviews.filter((i) => {
@@ -136,21 +164,27 @@ const DashboardOverview = () => {
       <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
         <div className="flex flex-wrap gap-4 items-center">
           <button
-            onClick={() => navigate("/dashboard/interview/hr")}
+            onClick={() => {
+              navigate("/dashboard/interview-form");
+            }}
             className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded shadow flex items-center gap-2 text-base font-semibold"
           >
             <FaUserTie className="text-lg" />
             HR Interview
           </button>
           <button
-            onClick={() => navigate("/dashboard/interview/behavioral")}
+            onClick={() => {
+              navigate("/dashboard/interview-form");
+            }}
             className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-3 rounded shadow flex items-center gap-2 text-base font-semibold"
           >
             <FaComments className="text-lg" />
             Behavioral Interview
           </button>
           <button
-            onClick={() => alert("Taking Interview...")}
+            onClick={() => {
+              alert("Taking Interview...");
+            }}
             className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded shadow flex items-center gap-2 text-base font-semibold"
           >
             <FaPlayCircle className="text-lg" />
@@ -217,7 +251,7 @@ const DashboardOverview = () => {
                 </span>
               </div>
 
-              {i.score && (
+              {i.score !== null && (
                 <div className="mt-2">
                   <p className="text-sm text-gray-600 font-medium">Score</p>
                   <div className="w-full bg-gray-200 h-3 rounded">

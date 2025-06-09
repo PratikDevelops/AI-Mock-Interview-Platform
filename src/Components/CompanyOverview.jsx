@@ -4,9 +4,10 @@ import {
 } from 'react-icons/fa';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { motion } from 'framer-motion';
+import Markdown from 'react-markdown'; 
 
 const MODEL_NAME = 'gemini-2.5-flash-preview-04-17';
-const API_KEY = 'AIzaSyCoYNO_88mK05IWYVFbkeK69sFpDXmK6fc';
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 const CompanyOverview = () => {
   const [company, setCompany] = useState('');
@@ -14,7 +15,6 @@ const CompanyOverview = () => {
   const [error, setError] = useState('');
   const [infoSections, setInfoSections] = useState([]);
   const [activeTab, setActiveTab] = useState(null);
-
 
   const handleGenerate = async () => {
     setError('');
@@ -161,9 +161,12 @@ const CompanyOverview = () => {
             {infoSections
               .filter(({ section }) => section === activeTab)
               .map(({ content }) => (
-                <p key={activeTab} className="whitespace-pre-wrap text-base leading-relaxed">
-                  {content}
-                </p>
+                <div
+                  key={activeTab}
+                  className="mt-3 prose prose-blue max-w-none text-base leading-relaxed"
+                >
+                  <Markdown>{content}</Markdown>
+                </div>
               ))}
           </article>
         </div>

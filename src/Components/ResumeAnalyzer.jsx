@@ -19,7 +19,7 @@ import workerSrc from 'pdfjs-dist/build/pdf.worker.min.js?url';
 GlobalWorkerOptions.workerSrc = workerSrc;
 
 const MODEL_NAME = 'gemini-2.5-flash-preview-04-17';
-const API_KEY = 'AIzaSyCoYNO_88mK05IWYVFbkeK69sFpDXmK6fc'; // Demo only
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY; // Demo only
 
 function ResumeAnalyzer() {
   const [resumeText, setResumeText] = useState('');

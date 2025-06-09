@@ -12,7 +12,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { motion } from 'framer-motion';
 
 const MODEL_NAME = 'gemini-2.5-flash-preview-04-17';
-const API_KEY = 'AIzaSyCoYNO_88mK05IWYVFbkeK69sFpDXmK6fc';
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 const CoverLetterGenerator = () => {
   const [jobTitle, setJobTitle] = useState('');
