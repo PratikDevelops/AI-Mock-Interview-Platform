@@ -93,7 +93,6 @@ const DashboardOverview = () => {
           }
         );
 
-        // Cleanup Firestore listener when auth state changes or component unmounts
         return () => unsubscribeSnapshot();
       } else {
         console.error("User not logged in. Cannot fetch interviews.");
@@ -168,24 +167,6 @@ const DashboardOverview = () => {
               navigate("/dashboard/interview-form");
             }}
             className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded shadow flex items-center gap-2 text-base font-semibold"
-          >
-            <FaUserTie className="text-lg" />
-            HR Interview
-          </button>
-          <button
-            onClick={() => {
-              navigate("/dashboard/interview-form");
-            }}
-            className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-3 rounded shadow flex items-center gap-2 text-base font-semibold"
-          >
-            <FaComments className="text-lg" />
-            Behavioral Interview
-          </button>
-          <button
-            onClick={() => {
-              alert("Taking Interview...");
-            }}
-            className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded shadow flex items-center gap-2 text-base font-semibold"
           >
             <FaPlayCircle className="text-lg" />
             Take Interview

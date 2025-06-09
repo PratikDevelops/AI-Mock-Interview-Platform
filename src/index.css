@@ -18,4 +18,14 @@ body {
 html{
    background: linear-gradient(to bottom right, #eef2ff, #e9d5ff, #eef2ff);
 }
+html {
+  scroll-behavior: smooth;
+}
+
+html {
+  scroll-padding-top: 64px; /* height of your navbar */
+}
+
+
+
  

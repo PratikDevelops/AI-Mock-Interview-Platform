@@ -77,7 +77,7 @@ const PricingSection = () => {
   const [billingCycle, setBillingCycle] = useState("monthly");
 
   return (
-    <section className=" py-20 px-6 md:px-12 lg:px-20 overflow-hidden">
+    <section id="pricing" className=" py-20 px-6 md:px-12 lg:px-20 overflow-hidden">
       <motion.div
         className="absolute top-10 left-10 w-48 h-48 bg-purple-300 opacity-30 rounded-full blur-3xl pointer-events-none"
         animate={{ y: [0, 20, 0] }}

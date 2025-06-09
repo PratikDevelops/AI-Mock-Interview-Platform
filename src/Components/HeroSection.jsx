@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 const HeroSection = () => {
   const navigate = useNavigate("")
   return (
-    <section className=" py-20 px-6 md:px-12 lg:px-24 relative overflow-hidden">
+    <section id='home' className=" py-20 px-6 md:px-12 lg:px-24 relative overflow-hidden">
       <div className="max-w-7xl mx-auto flex flex-col-reverse md:flex-row items-center justify-between gap-12">
     
         <motion.div

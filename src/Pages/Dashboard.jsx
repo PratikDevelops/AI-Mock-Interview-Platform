@@ -4,6 +4,9 @@ import {
   FaUserGraduate,
   FaChartLine,
   FaTimes,
+  FaRoad,
+  FaPenFancy,
+  FaSearch,
   FaBars,
   FaComments,
   FaBuilding,
@@ -37,53 +40,62 @@ const Dashboard = () => {
     return () => unsubscribe();
   }, []);
 
-  const menuItems = [
-    {
-      path: "",
-      label: "Dashboard",
-      icon: <FaTachometerAlt className="inline mr-2" />,
-    },
-    {
-      path: "resume-analyzer",
-      label: "Create Resume Analysis",
-      icon: <FaUserGraduate className="inline mr-2" />,
-    },
-    {
-      path: "career-roadmap",
-      label: "Generate Career Roadmap",
-      icon: <FaChartLine className="inline mr-2" />,
-    },
-    {
-      path: "cover-letter",
-      label: "Create Cover Letter",
-      icon: <FaRegEdit className="inline mr-2" />,
-    },
-    {
-      path: "company-overview",
-      label: "Create Company Overview",
-      icon: <FaBuilding className="inline mr-2" />,
-    },
-    {
-      path: "interview-qa",
-      label: "Generate Interview Q&A",
-      icon: <FaQuestionCircle className="inline mr-2" />,
-    },
-    {
-      path: "expert-booking",
-      label: "Book an Expert",
-      icon: <FaUserTie className="inline mr-2" />,
-    },
-    {
-      path: "study-material",
-      label: "Access Study Material",
-      icon: <FaBookOpen className="inline mr-2" />,
-    },
-    {
-      path: "job-search",
-      label: "Search Job",
-      icon: <FaBookOpen className="inline mr-2" />,
-    },
-  ];
+ const menuItems = [
+  {
+    path: "",
+    label: "Dashboard",
+    icon: <FaTachometerAlt className="inline mr-2 text-[#7366ff]" />,
+    title: "Overview of your account and activities",
+  },
+  {
+    path: "resume-analyzer",
+    label: "Create Resume Analysis",
+    icon: <FaUserGraduate className="inline mr-2 text-[#7366ff]" />,
+    title: "Analyze your resume and improve it",
+  },
+  {
+    path: "career-roadmap",
+    label: "Generate Career Roadmap",
+    icon: <FaRoad className="inline mr-2 text-[#7366ff]" />,
+    title: "Plan your career progression path",
+  },
+  {
+    path: "cover-letter",
+    label: "Create Cover Letter",
+    icon: <FaPenFancy className="inline mr-2 text-[#7366ff]" />,
+    title: "Generate personalized cover letters",
+  },
+  {
+    path: "company-overview",
+    label: "Create Company Overview",
+    icon: <FaBuilding className="inline mr-2 text-[#7366ff]" />,
+    title: "Get detailed company insights",
+  },
+  {
+    path: "interview-qa",
+    label: "Generate Interview Q&A",
+    icon: <FaQuestionCircle className="inline mr-2 text-[#7366ff]" />,
+    title: "Prepare with common interview questions",
+  },
+  {
+    path: "expert-booking",
+    label: "Book an Expert",
+    icon: <FaUserTie className="inline mr-2 text-[#7366ff]" />,
+    title: "Schedule sessions with industry experts",
+  },
+  {
+    path: "study-material",
+    label: "Access Study Material",
+    icon: <FaBookOpen className="inline mr-2 text-[#7366ff]" />,
+    title: "Browse helpful study resources",
+  },
+  {
+    path: "job-search",
+    label: "Search Job",
+    icon: <FaSearch className="inline mr-2 text-[#7366ff]" />,
+    title: "Find jobs matching your profile",
+  },
+];
 
   const handleLogout = async () => {
     try {

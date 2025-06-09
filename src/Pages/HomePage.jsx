@@ -7,6 +7,7 @@ import BookInterviewSection from '../Components/BookInterviewSection'
 import PricingSection from '../Components/PricingSection'
 import FaqSection from '../Components/FaqSection'
 import Footer from '../Components/Footer'
+import ContactUs from '../Components/ContactUs'
 
 const HomePage = () => {
   return (
@@ -19,6 +20,7 @@ const HomePage = () => {
       
       <PricingSection />
       <FaqSection />
+      <ContactUs/>
       <Footer />
     </div>
   )

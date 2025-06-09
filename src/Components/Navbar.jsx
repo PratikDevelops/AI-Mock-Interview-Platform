@@ -32,38 +32,39 @@ const Navbar = () => {
         </div>
 
         <div className="hidden md:flex space-x-8 items-center text-lg">
-          <a href="#" className="hover:text-[#7366ff] text-gray-800 font-medium">Home</a>
-          <a href="#" className="hover:text-[#7366ff] text-gray-800 font-medium">Features</a>
-          <a href="#" className="hover:text-[#7366ff] text-gray-800 font-medium">Pricing</a>
-          <a href="#" className="hover:text-[#7366ff] text-gray-800 font-medium">Contact</a>
+  <a href="#home" className="hover:text-[#7366ff] text-gray-800 font-medium">Home</a>
+  <a href="#features" className="hover:text-[#7366ff] text-gray-800 font-medium">Features</a>
+  <a href="#pricing" className="hover:text-[#7366ff] text-gray-800 font-medium">Pricing</a>
+  <a href="#contact" className="hover:text-[#7366ff] text-gray-800 font-medium">Contact</a>
 
-          {!loggedIn ? (
-            <button
-              onClick={onLoginClick}
-              className="bg-[#7366ff] text-white px-5 py-2 rounded-lg hover:bg-[#5a52d4] transition"
-            >
-              Login / Signup
-            </button>
-          ) : (
-            <div className="relative">
-              <button onClick={toggleUserMenu} className="text-2xl text-[#7366ff]">
-                <FaUserCircle />
-              </button>
-              {userMenuOpen && (
-                <div className="absolute right-0 mt-2 w-40 bg-white border shadow-lg rounded-lg z-50">
-                  <a href="#" className="block px-4 py-2 text-gray-800 hover:bg-gray-100">Profile</a>
-                  <a href="#" className="block px-4 py-2 text-gray-800 hover:bg-gray-100">Settings</a>
-                  <button
-                    onClick={onLogout}
-                    className="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
-                  >
-                    Logout
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
+  {!loggedIn ? (
+    <button
+      onClick={onLoginClick}
+      className="bg-[#7366ff] text-white px-5 py-2 rounded-lg hover:bg-[#5a52d4] transition"
+    >
+      Login / Signup
+    </button>
+  ) : (
+    <div className="relative">
+      <button onClick={toggleUserMenu} className="text-2xl text-[#7366ff]">
+        <FaUserCircle />
+      </button>
+      {userMenuOpen && (
+        <div className="absolute right-0 mt-2 w-40 bg-white border shadow-lg rounded-lg z-50">
+          <a href="#" className="block px-4 py-2 text-gray-800 hover:bg-gray-100">Profile</a>
+          <a href="#" className="block px-4 py-2 text-gray-800 hover:bg-gray-100">Settings</a>
+          <button
+            onClick={onLogout}
+            className="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
+          >
+            Logout
+          </button>
         </div>
+      )}
+    </div>
+  )}
+</div>
+
 
         <div className="md:hidden">
           <button onClick={toggleMenu}>
