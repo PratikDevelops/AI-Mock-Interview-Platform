@@ -1,4 +1,4 @@
-# 🤖 ConnectIQ – AI Mock Interview Platform
+# ConnectIQ – AI Mock Interview Platform
 
 Welcome to **ConnectIQ** – an intelligent and interactive web application designed to simulate real-time coding and behavioral interviews. Built with modern technologies and powered by AI, this platform helps candidates prepare effectively for technical interviews with realistic mock sessions, instant feedback, and career-building tools.
 
