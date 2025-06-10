@@ -1,12 +1,39 @@
-# React + Vite
+# 🤖 ConnectIQ – AI Mock Interview Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Welcome to **ConnectIQ** – an intelligent and interactive web application designed to simulate real-time coding and behavioral interviews. Built with modern technologies and powered by AI, this platform helps candidates prepare effectively for technical interviews with realistic mock sessions, instant feedback, and career-building tools.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## Expanding the ESLint configuration
+- 🧠 **AI-Powered Interviewer** – Simulates real-world interview questions using Google's Gemini AI.
+- 💬 **Behavioral & Coding Questions** – Practice both soft-skill and technical challenges.
+- 📄 **Resume Analyzer** – Get instant feedback on your resume to enhance your chances.
+- 🛤️ **Career Roadmap Generator** – Receive personalized learning paths based on your goals.
+- 🔐 **Authentication** – Secure login system using Firebase Authentication.
+- ☁️ **Data Storage** – Stores user sessions and interview data with Firebase.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend:** React.js, Tailwind CSS
+- **Backend:** Firebase (Firestore, Authentication)
+- **AI Integration:** Gemini (Google AI)
+
+---
+
+
+**Interested in contributing?**  
+Fork the repo, explore the code, and feel free to raise issues or submit pull requests.
+
+---
+
+## 📧 Contact
+
+Have questions or suggestions?  
+Feel free to reach out at **pratiksolves@gmail.com**
+
+---
+
+> Built with ❤️ by Pratik Kedar
