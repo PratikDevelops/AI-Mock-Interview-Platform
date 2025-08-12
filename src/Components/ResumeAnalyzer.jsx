@@ -73,11 +73,23 @@ function ResumeAnalyzer() {
       setError('Please enter or upload a resume before analyzing.');
       return;
     }
-    setError('');
-    setLoading(true);
-    setResponseJSON(null);
+// --- safer handleAnalyze with robust parsing and debug fallback ---
+const handleAnalyze = async () => {
+  if (!resumeText?.trim()) {
+    setError('Please enter or upload a resume before analyzing.');
+    return;
+  }
+  setError('');
+  setLoading(true);
+  setResponseJSON(null);
 
-    const genAI = new GoogleGenerativeAI(API_KEY);
+  try {
+    if (!API_KEY) {
+      throw new Error('Missing API key. Set VITE_GEMINI_API_KEY in your env.');
+    }
+
+    // NOTE: Confirm correct SDK usage in the package docs.
+    const genAI = new GoogleGenerativeAI(API_KEY); // or new GoogleGenerativeAI({ apiKey: API_KEY })
     const model = genAI.getGenerativeModel({ model: MODEL_NAME });
 
     const prompt = `You are an AI resume reviewer. Analyze the following resume text and respond ONLY with a JSON array containing one object exactly in this format:
@@ -101,22 +113,46 @@ Important:
 Resume:
 ${resumeText}`;
 
+    const result = await model.generateContent(prompt);
+    // Some SDKs return a Response-like object, or .text(), or .content — check your SDK.
+    const raw = (await (result?.response?.text ? result.response.text() : Promise.resolve(JSON.stringify(result))))?.trim?.();
+
+    if (!raw) throw new Error('Empty response from model');
+
+    // robust JSON extraction
+    let parsed = null;
     try {
-      const result = await model.generateContent(prompt);
-      const text = (await result.response.text()).trim();
-
-      const jsonStart = text.indexOf('[');
-      const jsonEnd = text.lastIndexOf(']');
-      const jsonString = text.slice(jsonStart, jsonEnd + 1);
-
-      setResponseJSON(JSON.parse(jsonString));
+      // try parse as-is
+      parsed = JSON.parse(raw);
     } catch (err) {
-      console.error(err);
-      setError('Error analyzing resume.');
-    } finally {
-      setLoading(false);
+      // try to find first [ ... ] block
+      const jsonStart = raw.indexOf('[');
+      const jsonEnd = raw.lastIndexOf(']');
+      if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
+        const jsonString = raw.slice(jsonStart, jsonEnd + 1);
+        parsed = JSON.parse(jsonString);
+      } else {
+        console.error('Raw model response (not JSON):', raw);
+        throw new Error('Model did not return valid JSON. See console for raw response.');
+      }
     }
-  };
+
+    // Validate structure minimally
+    if (!Array.isArray(parsed) || parsed.length === 0 || typeof parsed[0].resumeScore !== 'number') {
+      console.warn('Unexpected JSON shape from model:', parsed);
+      // still set it so you can debug in UI
+      setResponseJSON(parsed);
+    } else {
+      setResponseJSON(parsed);
+    }
+  } catch (err) {
+    console.error('analyze error', err);
+    setError(err.message || 'Error analyzing resume. Check console for details.');
+  } finally {
+    setLoading(false);
+  }
+};    
+    setError('');
 
   const resetAll = () => {
     setResumeText('');
