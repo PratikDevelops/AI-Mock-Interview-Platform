@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   FaFileAlt,
   FaLightbulb,
@@ -11,8 +11,49 @@ import {
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { motion } from 'framer-motion';
 
-const MODEL_NAME = 'gemini-2.5-flash-preview-04-17';
+const MODEL_NAME = 'models/gemini-2.5-flash-preview-05-20';
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+
+const steps = [
+  'Understanding job details...',
+  'Matching skills and experience...',
+  'Drafting introduction...',
+  'Writing body paragraphs...',
+  'Finalizing cover letter...',
+];
+
+function LoadingSteps() {
+  const [stepIndex, setStepIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setStepIndex((prev) => (prev + 1) % steps.length);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="flex flex-col items-center justify-center text-center py-10">
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ repeat: Infinity, duration: 1.5, ease: 'linear' }}
+        className="text-blue-600 text-5xl mb-4"
+      >
+        <FaSpinner />
+      </motion.div>
+      <motion.p
+        key={stepIndex}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={{ duration: 0.5 }}
+        className="text-lg font-semibold text-gray-700"
+      >
+        {steps[stepIndex]}
+      </motion.p>
+    </div>
+  );
+}
 
 const CoverLetterGenerator = () => {
   const [jobTitle, setJobTitle] = useState('');
@@ -20,6 +61,7 @@ const CoverLetterGenerator = () => {
   const [additionalInfo, setAdditionalInfo] = useState('');
   const [coverLetter, setCoverLetter] = useState('');
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
 
@@ -27,6 +69,7 @@ const CoverLetterGenerator = () => {
     setError('');
     setCoverLetter('');
     setCopied(false);
+    setSuccess(false);
 
     if (!jobTitle.trim() || !companyName.trim()) {
       setError('Please enter both Job Title and Company Name.');
@@ -57,7 +100,14 @@ Additional Information: ${additionalInfo.trim() || 'N/A'}
       const jsonEnd = text.lastIndexOf('}');
       const jsonString = text.slice(jsonStart, jsonEnd + 1);
       const parsed = JSON.parse(jsonString);
-      setCoverLetter(parsed.coverLetter);
+
+      setTimeout(() => {
+        setSuccess(true);
+        setTimeout(() => {
+          setCoverLetter(parsed.coverLetter);
+          setSuccess(false);
+        }, 1500);
+      }, 1000);
     } catch (err) {
       console.error(err);
       setError('Error generating cover letter.');
@@ -73,6 +123,7 @@ Additional Information: ${additionalInfo.trim() || 'N/A'}
     setCoverLetter('');
     setError('');
     setCopied(false);
+    setSuccess(false);
   };
 
   const copyToClipboard = () => {
@@ -153,6 +204,20 @@ Additional Information: ${additionalInfo.trim() || 'N/A'}
         <p className="text-red-500 font-semibold mb-4 text-lg" role="alert">
           {error}
         </p>
+      )}
+
+      {loading && <LoadingSteps />}
+
+      {success && (
+        <motion.div
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6 }}
+          className="flex flex-col items-center justify-center py-10"
+        >
+          <FaCheck className="text-green-600 text-6xl mb-4" />
+          <p className="text-2xl font-bold text-green-700">Cover Letter Ready!</p>
+        </motion.div>
       )}
 
       {coverLetter && (

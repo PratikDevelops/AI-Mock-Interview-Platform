@@ -1,13 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
-  FaBuilding, FaStar, FaChartLine, FaUsers, FaHandshake, FaSpinner
+  FaBuilding, FaStar, FaChartLine, FaUsers, FaHandshake, FaSpinner, FaCheck
 } from 'react-icons/fa';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { motion } from 'framer-motion';
-import Markdown from 'react-markdown'; 
+import { motion, AnimatePresence } from 'framer-motion';
+import Markdown from 'react-markdown';
 
-const MODEL_NAME = 'gemini-2.5-flash-preview-04-17';
+const MODEL_NAME = 'models/gemini-2.5-flash-preview-05-20';
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+
+const loadingSteps = [
+  'Validating company name...',
+  'Searching latest updates...',
+  'Analyzing company culture...',
+  'Collecting financial data...',
+  'Compiling competitor insights...'
+];
 
 const CompanyOverview = () => {
   const [company, setCompany] = useState('');
@@ -15,11 +23,28 @@ const CompanyOverview = () => {
   const [error, setError] = useState('');
   const [infoSections, setInfoSections] = useState([]);
   const [activeTab, setActiveTab] = useState(null);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    let stepTimer;
+    if (loading && !success) {
+      setCurrentStep(0);
+      stepTimer = setInterval(() => {
+        setCurrentStep(prev => {
+          if (prev < loadingSteps.length - 1) return prev + 1;
+          return prev;
+        });
+      }, 1200);
+    }
+    return () => clearInterval(stepTimer);
+  }, [loading, success]);
 
   const handleGenerate = async () => {
     setError('');
     setInfoSections([]);
     setActiveTab(null);
+    setSuccess(false);
 
     if (!company.trim()) {
       setError('Please enter a company name.');
@@ -33,34 +58,13 @@ const CompanyOverview = () => {
 
     const prompt = `Provide detailed information about the company "${company}". Return the result ONLY in valid JSON format like this:
 [
-  {
-    "section": "Overview",
-    "content": "Brief overview of the company..."
-  },
-  {
-    "section": "Culture",
-    "content": "Description of company culture..."
-  },
-  {
-    "section": "Latest News",
-    "content": "Recent news and developments..."
-  },
-  {
-    "section": "Key Facts",
-    "content": "Important facts such as founding year, headquarters, revenue, etc."
-  },
-  {
-    "section": "Customer Reviews",
-    "content": "Summary of customer reviews, ratings, and feedback."
-  },
-  {
-    "section": "Financials",
-    "content": "Information on revenue, profit, stock price, market cap, etc."
-  },
-  {
-    "section": "Competitors",
-    "content": "List and brief info about main competitors."
-  }
+  {"section": "Overview", "content": "Brief overview..."},
+  {"section": "Culture", "content": "Company culture..."},
+  {"section": "Latest News", "content": "Recent news..."},
+  {"section": "Key Facts", "content": "Facts: founding year, HQ, revenue..."},
+  {"section": "Customer Reviews", "content": "Summary of reviews..."},
+  {"section": "Financials", "content": "Revenue, profit, market cap..."},
+  {"section": "Competitors", "content": "Main competitors..."}
 ]`;
 
     try {
@@ -72,12 +76,16 @@ const CompanyOverview = () => {
       const jsonString = text.slice(jsonStart, jsonEnd + 1);
       const parsed = JSON.parse(jsonString);
 
-      setInfoSections(parsed);
-      if (parsed.length > 0) setActiveTab(parsed[0].section);
+      setTimeout(() => {
+        setInfoSections(parsed);
+        if (parsed.length > 0) setActiveTab(parsed[0].section);
+        setLoading(false);
+        setSuccess(true);
+        setTimeout(() => setSuccess(false), 1500);
+      }, 2000);
     } catch (err) {
       console.error(err);
       setError('Failed to fetch company information. Please try again.');
-    } finally {
       setLoading(false);
     }
   };
@@ -136,7 +144,34 @@ const CompanyOverview = () => {
         </p>
       )}
 
-      {infoSections.length > 0 && (
+      {/* Loading Steps */}
+      <AnimatePresence>
+        {loading && !success && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="mb-6 text-center"
+          >
+            <FaSpinner className="animate-spin text-blue-600 text-3xl mx-auto mb-3" />
+            <p className="text-lg font-medium text-gray-700">{loadingSteps[currentStep]}</p>
+          </motion.div>
+        )}
+
+        {success && (
+          <motion.div
+            key="success"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex items-center justify-center gap-3 text-green-600 font-semibold text-lg mb-6"
+          >
+            <FaCheck className="text-2xl" /> Company Research Ready!
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {infoSections.length > 0 && !loading && !success && (
         <div className="flex flex-col md:flex-row gap-4 max-w-full">
           <nav className="w-full md:w-1/4 border-r border-gray-300">
             <div className="flex md:flex-col flex-row overflow-x-auto md:overflow-visible gap-2 md:gap-0">

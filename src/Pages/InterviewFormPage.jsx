@@ -7,8 +7,8 @@ import { FaBriefcase } from "react-icons/fa";
 import { db, auth } from "../firebase";
 import { collection, addDoc } from "firebase/firestore";
 
-const MODEL_NAME = "gemini-2.5-flash-preview-04-17";
-const API_KEY = "AIzaSyCoYNO_88mK05IWYVFbkeK69sFpDXmK6fc";
+const MODEL_NAME = 'models/gemini-2.5-flash-preview-05-20';
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 const interviewTypes = [
   { id: "behavioral", label: "Behavioral" },
