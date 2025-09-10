@@ -156,7 +156,8 @@ function ResumeAnalyzer() {
     "improvements": [array of plain strings],
     "suggestions": [array of plain strings],
     "weaknesses": [array of plain strings],
-    "strengths": [array of plain strings]
+    "strengths": [array of plain strings],
+    "recommendedRoles": [exactly 3 job role strings]
   }
 ] 
 
@@ -181,7 +182,6 @@ ${resumeText}`;
         }
       }
 
-      // success flow
       setTimeout(() => {
         setLoading(false);
         setSuccess(true);
@@ -304,7 +304,6 @@ ${resumeText}`;
         <section className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {responseJSON.map((result, idx) => (
             <React.Fragment key={idx}>
-              {/* Resume Score */}
               <div className="p-6 rounded-lg shadow-md border bg-white border-gray-200 text-gray-900">
                 <h3 className="text-2xl font-semibold mb-4 text-center flex justify-center items-center gap-2">
                   <FaCheckCircle /> Resume Score
@@ -339,6 +338,34 @@ ${resumeText}`;
                 </p>
               </div>
 
+              <div className="p-6 rounded-lg shadow-md border col-span-full bg-purple-200 border-gray-200 text-gray-900">
+                <h3 className="text-2xl font-semibold mb-4 text-center flex justify-center items-center gap-2">
+                  <FaLightbulb /> Recommended Job Roles
+                </h3>
+                <div className="flex flex-wrap justify-center gap-4">
+                  {result.recommendedRoles && result.recommendedRoles.length ? (
+                    result.recommendedRoles.map((role, i) => (
+                      <button
+                        key={i}
+                        onClick={() =>
+                          window.open(
+                            `https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(
+                              role
+                            )}`,
+                            "_blank"
+                          )
+                        }
+                        className="px-6 py-2 rounded-full bg-purple-600 text-white font-semibold shadow-md hover:bg-purple-700 transition"
+                      >
+                        {role}
+                      </button>
+                    ))
+                  ) : (
+                    <p>No roles suggested.</p>
+                  )}
+                </div>
+              </div>
+
               <div
                 className="p-6 rounded-lg shadow-md border col-span-full bg-blue-200 border-gray-200 text-gray-900 cursor-pointer select-none"
                 onClick={() => toggleAccordion("improvements")}
@@ -347,7 +374,11 @@ ${resumeText}`;
                   <span className="flex items-center gap-2">
                     <FaThumbsDown /> Improvements
                   </span>
-                  {accordionOpen.improvements ? <FaChevronUp /> : <FaChevronDown />}
+                  {accordionOpen.improvements ? (
+                    <FaChevronUp />
+                  ) : (
+                    <FaChevronDown />
+                  )}
                 </h3>
                 {accordionOpen.improvements && (
                   <ul className="list-disc list-inside space-y-1 text-xl max-h-60 overflow-y-auto">
@@ -368,7 +399,11 @@ ${resumeText}`;
                   <span className="flex items-center gap-2">
                     <FaExclamationTriangle /> Suggestions
                   </span>
-                  {accordionOpen.suggestions ? <FaChevronUp /> : <FaChevronDown />}
+                  {accordionOpen.suggestions ? (
+                    <FaChevronUp />
+                  ) : (
+                    <FaChevronDown />
+                  )}
                 </h3>
                 {accordionOpen.suggestions && (
                   <ul className="list-disc list-inside space-y-1 text-xl max-h-60 overflow-y-auto">
@@ -389,7 +424,11 @@ ${resumeText}`;
                   <span className="flex items-center gap-2">
                     <FaThumbsDown /> Weaknesses
                   </span>
-                  {accordionOpen.weaknesses ? <FaChevronUp /> : <FaChevronDown />}
+                  {accordionOpen.weaknesses ? (
+                    <FaChevronUp />
+                  ) : (
+                    <FaChevronDown />
+                  )}
                 </h3>
                 {accordionOpen.weaknesses && (
                   <ul className="list-disc list-inside space-y-1 text-xl max-h-60 overflow-y-auto">
@@ -410,7 +449,11 @@ ${resumeText}`;
                   <span className="flex items-center gap-2">
                     <FaThumbsUp /> Strengths
                   </span>
-                  {accordionOpen.strengths ? <FaChevronUp /> : <FaChevronDown />}
+                  {accordionOpen.strengths ? (
+                    <FaChevronUp />
+                  ) : (
+                    <FaChevronDown />
+                  )}
                 </h3>
                 {accordionOpen.strengths && (
                   <ul className="list-disc list-inside space-y-1 text-xl max-h-60 overflow-y-auto">
