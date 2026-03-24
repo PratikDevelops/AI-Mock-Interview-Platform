@@ -9,7 +9,7 @@ import {
 import { motion } from 'framer-motion';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
-const MODEL_NAME = 'models/gemini-2.5-flash-preview-05-20';
+const MODEL_NAME = "gemini-flash-lite-latest";
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
 const steps = [
