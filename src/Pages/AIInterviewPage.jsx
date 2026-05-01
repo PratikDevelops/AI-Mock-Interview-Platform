@@ -129,9 +129,7 @@ Key Guidelines:
     setLoadingFeedback(true);
     try {
       const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
-      const model = genAI.getGenerativeModel({
-        model: "models/gemini-2.5-flash-preview-05-20",
-      });
+      const model = genAI.getGenerativeModel({ model: MODEL_NAME });
 
       const transcriptText = conversationLog
         .map(
